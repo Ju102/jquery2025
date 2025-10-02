@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Sumar tabla de números</title>
+    </head>
+    <body>
+        <h1>Calculadora</h1>
+        <br>
+        <label>Primer Número: </label><br>
+        <input type="text" id="caja1"><br><br>
+        <label>Segundo número: </label><br>
+        <input type="text" id="caja2"><br><br>
+
+        <button id="botonsuma">Calcular</button>
+
+        <h1 id="resultado"></h1>
+
+        <hr><br>
+
+        <input type="text" id="cajatabla"><br><br>
+        <button id="botontabla">Tabla de Multiplicar</button><br>
+        <table id="tabla"></table>
+
+        <script src="js/jquery-3.7.1.js"></script>
+        <script>
+            $(document).ready(function() {
+                $("#resultado").hide();
+
+                $("#botonsuma").click(function() {
+                    var sumando1 = $("#caja1").val();
+                    var sumando2 = $("#caja2").val();
+                    var resultSuma = parseInt(sumando1) + parseInt(sumando2);
+                    $("#resultado").text("Resultado: "+resultSuma).show();
+                });
+
+                $("#botontabla").click(function() {
+                    var numero = parseInt($("#cajatabla").val());
+
+                    var html = "";
+                    
+                    for(var i = 1; i <= 10; i++) {
+                        var operacion = numero * i;
+                        var texto = numero + " x " + i + " = ";
+                        html += "<tr>";
+                        html += "<td>" + texto + "</td>";
+                        html += "<td>" + operacion + "</td>";
+                        html += "</tr>";
+                    }
+
+                    $("#tabla").html(html);
+                });
+            });
+        </script>
+    </body>
+</html>

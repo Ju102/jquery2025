@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Atributos y JQuery</title>
+        <style>
+            img {
+                width: 150px;
+                height: 150px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1 style="color:blue">Soy un título azul</h1>
+
+        <button id="bot">Púlsame</button>
+        <br><br>
+        <img src="images/madrid.jpg">
+        <img src="images/madrid.jpg">
+        <img src="images/madrid.jpg">
+        <img src="images/madrid.jpg">
+        <br>
+        <br>
+        <input type="text" id="caja1">
+
+
+        <script src="js/jquery-3.7.1.js"></script>
+        <script>
+            $(document).ready(function() {
+
+                $("img").mouseover(function() {
+                    $(this).attr("src","images/moon.jpg");
+                    var actual = $(this).attr("src");
+                    console.log("Imagen over: "+ actual);
+                });
+
+                $("img").mouseout(function() {
+                    $(this).attr("src","images/madrid.jpg");
+                    var actual = $(this).attr("src");
+                    console.log("Imagen out:" + actual);
+                })
+
+                $("#bot").click(function() {
+                    $("h1").css({"color":"red", "font-size":"smaller"});
+                    $("h1").text("Ahora ya no soy un título y soy rojo");
+                    $("#caja1").val("El campo ahora está lleno y desactivado").attr("disabled","true");
+                }); 
+            });
+        </script>
+    </body>
+</html>

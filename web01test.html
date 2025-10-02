@@ -4,8 +4,58 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>JQuery</title>
+        <style>
+            .rojo {
+                color: red;
+            }
+
+            .verde {
+                color: green;
+            }
+        </style>
     </head>
     <body>
-        <p>Prueba de GitHub</p>
+        <!--
+        COMENTARIOS EN IDEs DE MICROSOFT
+        CONTROL + K + C
+        DESCOMENtAR
+        CONTROL + K + U
+        PEDIR AUTORELLENO
+        CONTROL + SPACE
+        -->
+
+        <h1>Selectores de JQuery</h1>
+        <h2>Esto es una prueba</h2>
+        <h3 class="verde">Púlsame para desaparecer</h3>
+        <button id="botonn">Púlsame</button>
+        <button id="botonn2">Ahora púlsame a mi</button>
+        <p>Párrafo 1</p>
+        <p>Párrafo 2</p>
+        <p>Párrafo 3</p>
+
+        <script src="js/jquery-3.7.1.js"></script>
+        <script>
+            // Codigo JQuery
+            // La primera linea siempre debe ser:
+            $(document).ready(function() {
+                // alert("Hola Mundo");
+                $("h2").hide();
+                $("#botonn2").hide();
+                $("#botonn").click(function() {
+                    $(this).addClass("rojo");
+                    $("#botonn2").show();
+                });
+                $("p").click(function() {
+                    $("#botonn").hide();
+                    console.log("Pulsado un p")
+                });
+
+                $(".verde").click(function() {
+                    $(this).hide()
+                });
+
+                // IMPRESCINDIBLES MENSAJES EN CONSOLA
+            });
+        </script>
     </body>
 </html>
