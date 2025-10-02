@@ -27,32 +27,35 @@
                 var numro2 = parseInt($("#numero2").val());
                 var numro3 = parseInt($("#numero3").val());
 
-                if ((numro1 > numro2) && (numro1 > numro3)) {
-                    if (numro2 > numro3) {
-                        var texto = numro1.toString() + " es el número más alto, " + numro2.toString() + " es el número intermedio, y " + numro3.toString() + " es el número más pequeño.";
-                    }
-                    else {
-                        var texto = numro1.toString() + " es el número más alto, " + numro3.toString() + " es el número intermedio, y " + numro2.toString() + " es el número más pequeño.";   
-                    }
+                var mayor = 0, menor = 0, medio = 0;
+
+                if (numro1 >= numro2 && numro1 >= numro3) {
+                    mayor = numro1;
                 }
-                else if ((numro2 > numro1) && (numro2 > numro3)) {
-                    if (numro1 > numro3) {
-                        var texto = numro2.toString() + " es el número más alto, " + numro1.toString() + " es el número intermedio, y " + numro3.toString() + " es el número más pequeño.";
-                    }
-                    else {
-                        var texto = numro2.toString() + " es el número más alto, " + numro3.toString() + " es el número intermedio, y " + numro1.toString() + " es el número más pequeño.";   
-                    }
+                else if (numro2 >= numro1 && numro2 >= numro3) {
+                    mayor = numro2;   
                 }
-                else if ((numro3 > numro1) && (numro3 > numro2)) {
-                    if (numro1 > numro2) {
-                        var texto = numro3.toString() + " es el número más alto, " + numro1.toString() + " es el número intermedio, y " + numro2.toString() + " es el número más pequeño.";
-                    }
-                    else {
-                        var texto = numro3.toString() + " es el número más alto, " + numro2.toString() + " es el número intermedio, y " + numro1.toString() + " es el número más pequeño.";   
-                    }
+                else {
+                    mayor = numro3;
                 }
 
-                $("comparativa").html(texto);
+                if (numro1 <= numro2 && numro1 <= numro3) {
+                    menor = numro1;
+                }
+                else if (numro2 <= numro1 && numro2 <= numro3) {
+                    menor = numro2;
+                }
+                else {
+                    menor = numro3;
+                }
+
+                var suma = numro1 + numro2 + numro3;
+
+                medio = suma - mayor - menor;
+
+                texto = "<br>Mayor: " + mayor + "<br>Medio: " + medio + "<br>Menor: " + menor;
+
+                $("#comparativa").html(texto);
 
             });
         });
