@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sumar botones</title>
+</head>
+<body>
+    <h1>Suma de botones</h1>
+    <br>
+    <div id="cajabotones"></div>
+    <span id="cajasuma"><h1 id="resultado"></h1></span>
+    <br>
+    <script src="js/jquery-3.7.1.js"></script>
+    <script>
+        $(document).ready(function() {
+            var total = 0;
+
+            for(var i = 1; i <= 10; i++) {
+                var boton = $("<button>");
+                var random = Math.floor(Math.random() * 99) + 1;
+                $(boton).attr("value",random);
+                boton.text("Numero " + random.toString());
+                $("#cajabotones").append(boton).append(" ");
+            }
+
+            $("button").click(function() {
+                total += parseInt($(this).val());
+                $("#resultado").html(total.toString());
+                
+                // $(this).css({"color":"white", "background-color":"darkblue", "border-radius":"6px","padding":"12px", "font-weight":"bold"});
+                //$(this).attr("disabled","true");
+                // $(this).remove();
+
+            });
+        });
+    </script>
+</body>
+</html>
