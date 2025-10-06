@@ -48,21 +48,21 @@
             var filtro = "LOC:contains(" + localidad + ")";
             // Son varios elementos los que podria devolver (usar each)
             var html = "";
-            $(data)
-              .find(filtro)
-              .each(function () {
-                
-                /*
-                var cosa = $(this).text();
-                html += "<li>" + cosa + "</li>";
-                */
 
-                var ndepto = $(this).parent().attr("DEPT_NO");
-                var nombre = $(this).parent().find("DNOMBRE").text();
+            if ($(data).find(filtro).length == 0) {
+              $("#mensaje").text("No existe la localidad " + localidad);
+            } else {
+              $(data)
+                .find(filtro)
+                .each(function () {
+                  var nodopadre = $(this).parent();
+                  var ndepto = nodopadre.attr("DEPT_NO");
+                  var nombre = nodopadre.find("DNOMBRE").text();
 
-                html += "<li>Nº Departamento: " + ndepto;
-                html += "<br>Nombre: " + nombre + "</li><br>";
-              });
+                  html += "<li>Nº Departamento: " + ndepto;
+                  html += "<br>Nombre: " + nombre + "</li><br>";
+                });
+            }
             $("#listadepartamentos").html(html);
           });
         });
