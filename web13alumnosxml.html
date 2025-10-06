@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alumnos</title>
+  </head>
+  <body>
+    <h1>Alumnos notas XML</h1>
+    <label>Introduzca nota: </label>
+    <input type="text" id="cajaNota" />
+    <button id="botonBuscar">Buscar alumnos</button><br /><br />
+
+    <table id="tablaResultados">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Apellidos</th>
+          <th>Nota</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <script src="js/jquery-3.7.1.js"></script>
+    <script>
+      $(document).ready(function () {
+        $("#botonBuscar").click(function () {
+          $.get("documents/alumnos.xml", function (data) {
+            console.log("Leyendo servicio...");
+            var busqueda = parseInt($("#cajaNota").val());
+            var html = "";
+
+            $(data)
+              .find("nota")
+              .each(function () {
+                var nodopadre = $(this).parent();
+                var nota = nodopadre.find("nota").text();
+                if (parseInt(nota) >= busqueda) {
+                  var nombre = nodopadre.find("nombre").text();
+                  var apellidos = nodopadre.find("apellidos").text();
+                  html += "<tr>";
+                  html += "<td>" + nombre + "</td>";
+                  html += "<td>" + apellidos + "</td>";
+                  html += "<td>" + nota + "</td>";
+                  html += "</tr>";
+                }
+              });
+
+            $("#tablaResultados tbody").html(html);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

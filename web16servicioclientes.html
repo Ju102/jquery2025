@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Servicio Clientes XML</title>
+  </head>
+  <body>
+    <h1>Servicio XML Clientes</h1>
+    <br />
+    <label>Seleccione un cliente: </label>
+    <select id="selectclientes">
+      <option value="0">Seleccionar</option>
+    </select>
+    <div id="contenedor"></div>
+    <script src="js/jquery-3.7.1.js"></script>
+    <script>
+      $(document).ready(function () {
+        let url = "https://apiclientesxml.azurewebsites.net/";
+        let request = "/api/Clientes/GetClientesXML";
+
+        $.get(url + request, function (data) {
+          console.log("Leyendo servicio");
+          $(data)
+            .find("CLIENTE")
+            .each(function () {
+              var nombre = $(this).find("NOMBRE").text();
+              var idCliente = $(this).attr("IDCLIENTE");
+              var opcion = $("<option>");
+              opcion.val(idCliente);
+              opcion.text(nombre);
+              $("#selectclientes").append(opcion);
+            });
+        });
+
+        $("#selectclientes").change(function () {
+          var id = $(this).val();
+          $.get(url + request, function (data) {
+            console.log("Leyendo un objeto de servicio");
+            var filtro = "CLIENTE[IDCLIENTE = " + id + "]";
+            var nodo = $(data).find(filtro).first();
+
+            var nombre = nodo.find("NOMBRE").text();
+            var direccion = nodo.find("DIRECCION").text();
+            var email = nodo.find("EMAIL").text();
+            var codpos = nodo.find("CODIGOPOSTAL").text();
+            var web = nodo.find("PAGINAWEB").text();
+            var imagen = nodo.find("IMAGENCLIENTE").text();
+
+            var html = `<h3>${nombre}</h3>`;
+            html += `<img src=${imagen}>`;
+            html += `<ul style="list-style-type:none"><li>Dirección: ${direccion}</li><li>Email: ${email}</li><li>C.P.: ${codpos}</li><li>Web: ${web}</li></ul>`;
+            $("#contenedor").html(html);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

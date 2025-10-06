@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Servicio de Coches XML</title>
+  </head>
+  <body>
+    <h1>Servicio XML Coches</h1>
+    <br />
+    <label>Seleccione un coche: </label>
+    <select id="selectcoche">
+      <option value="0">Seleccionar</option></select
+    ><br /><br />
+    <div id="contenedor"></div>
+    <script src="js/jquery-3.7.1.js"></script>
+    <script>
+      $(document).ready(function () {
+        let url = "https://apiclientesxml.azurewebsites.net/";
+        let request = "api/Clientes/GetCochesXML";
+
+        $.get(url + request, function (data) {
+          console.log("Leyendo servicio");
+          $(data)
+            .find("coche")
+            .each(function () {
+              var marca = $(this).find("marca").text();
+              var modelo = $(this).find("modelo").text();
+              var id = parseInt($(this).attr("idcoche"));
+              var option = $("<option>");
+              option.val(id);
+              option.text(marca + " " + modelo);
+              $("#selectcoche").append(option);
+            });
+        });
+
+        $("#selectcoche").change(function () {
+          var id = $(this).val(); // id del option
+
+          $.get(url + request, function (data) {
+            var filtro = "coche[idcoche=" + id + "]";
+            var nodo = $(data).find(filtro).first();
+            var imagen = nodo.find("imagen").text();
+            $("#contenedor").html("<img src='" + imagen + "'>");
+            $("#contenedor").html(`<img src="${imagen}">`);
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
