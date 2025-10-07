@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Eliminar Departamentos</title>
+  </head>
+  <body>
+    <h1>Lista de Departamentos</h1>
+    <table id="tabladepartamentos" border="1">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <script src="js/jquery-3.7.1.js"></script>
+    <script>
+      let url = "https://apicruddepartamentospgs.azurewebsites.net/";
+
+      $(document).ready(function () {
+        loadDepartamentos();
+
+        $(".botonEliminar").click(function () {
+            var numero = parseInt((this).data("id"));
+            var request = "/webresources/departamentos/delete/"+numero;
+
+            $.ajax({
+                url: url + request,
+                type: "DELETE",
+                success: function() {
+                    console.log("Departamento eliminado con exito");
+                    loadDepartamentos();
+                }
+            });
+        });
+      });
+
+      function loadDepartamentos() {
+        let request = "webresources/departamentos/";
+        var html = "";
+        $.getJSON(url + request, function (data) {
+          $.each(data, function (index, departamento) {
+            var nombre = departamento.nombre;
+            var id = departamento.numero;
+
+            html += "<tr>";
+            html += `<td>${nombre}</td>`;
+            html += `<td><button class="botonEliminar" data-numero=${id}>Eliminar</button></td>`;
+            html += "</tr>";
+          });
+          $("#tabladepartamentos tbody").html(html);
+        });
+      }
+    </script>
+  </body>
+</html>
