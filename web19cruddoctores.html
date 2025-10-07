@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CRUD Doctores</title>
+  </head>
+  <body>
+    <h1>Lista de Doctores</h1>
+    <table id="tabladoctores">
+      <thead>
+        <tr>
+          <th>Apellido/s</th>
+          <th>Especialidad</th>
+          <th>ID</th>
+          <th>ID Hospital</th>
+          <th>Salario</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <br /><br />
+    <label>Apellido/s: </label>
+    <input type="text" id="cajaapellido" /><br />
+    <label>Especialidad: </label>
+    <input type="text" id="cajaespecialidad" /><br />
+    <label>ID: </label>
+    <input type="text" id="cajaiddoctor" /><br />
+    <label>ID Hospital: </label>
+    <input type="text" id="cajaidhospital" /><br />
+    <label>Salario: </label>
+    <input type="text" id="cajasalario" /><br /><br />
+    <button id="botoninsert">Insertar</button>
+    <button id="botonupdate">Modificar</button>
+    <button id="botondelete">Eliminar</button>
+
+    <script src="js/jquery-3.7.1.js"></script>
+    <script>
+      let apiUrl = "https://apicruddoctoresxml.azurewebsites.net/";
+
+      $(document).ready(function () {
+        loadDoctores();
+
+        $("#botoninsert").click(function () {
+          let apellido = $("#cajaapellido").val();
+          let especialidad = $("#cajaespecialidad").val();
+          let id = $("#cajaiddoctor").val();
+          let idHospital = $("#cajaidhospital").val();
+          let salario = $("#cajasalario").val();
+
+          let request = "api/doctores/";
+
+          let dataXML = getDoctoresXML(
+            apellido,
+            especialidad,
+            id,
+            idHospital,
+            salario
+          );
+
+          $.ajax({
+            url: apiUrl + request,
+            type: "POST",
+            contentType: "text/xml",
+            data: dataXML,
+            success: function () {
+              console.log("Datos añadidos con exito");
+              loadDoctores();
+            },
+          });
+        });
+
+        $("#botonupdate").click(function () {
+          let apellido = $("#cajaapellido").val();
+          let especialidad = $("#cajaespecialidad").val();
+          let id = $("#cajaiddoctor").val();
+          let idHospital = $("#cajaidhospital").val();
+          let salario = $("#cajasalario").val();
+
+          let request = "api/doctores/";
+
+          let dataXML = getDoctoresXML(
+            apellido,
+            especialidad,
+            id,
+            idHospital,
+            salario
+          );
+
+          $.ajax({
+            url: apiUrl + request,
+            type: "PUT",
+            contentType: "text/xml",
+            data: dataXML,
+            success: function () {
+              console.log("Datos modificados con exito");
+              loadDoctores();
+            },
+          });
+        });
+
+        $("#botondelete").click(function() {
+            let id = $("#cajaiddoctor").val();
+
+            let request = "api/doctores/" + id;
+
+            $.ajax({
+                url: apiUrl + request,
+                type: "DELETE",
+                success: function(){
+                    console.log("Datos eliminados con exito");
+                    loadDoctores();
+                }
+            });
+
+        });
+
+      });
+
+      function getDoctoresXML(
+        apellido,
+        especialidad,
+        idDoctor,
+        idHospital,
+        salario
+      ) {
+        let dataXML = "<Doctor>";
+        dataXML += "<Apellido>" + apellido + "</Apellido>";
+        dataXML += "<Especialidad>" + especialidad + "</Especialidad>";
+        dataXML += "<IdDoctor>" + idDoctor + "</IdDoctor>";
+        dataXML += "<IdHospital>" + idHospital + "</IdHospital>";
+        dataXML += "<Salario>" + salario + "</Salario>";
+        dataXML += "</Doctor>";
+        return dataXML;
+      }
+
+      function loadDoctores() {
+        let request = "api/doctores";
+
+        $("#tabladoctores tbody").empty();
+
+        $.get(apiUrl + request, function (data) {
+          console.log("Leyendo servicio...");
+          var fila = "";
+          $(data)
+            .find("Doctor")
+            .each(function () {
+              var apellidos = $(this).find("Apellido").text();
+              var especialidad = $(this).find("Especialidad").text();
+              var idDoctor = $(this).find("IdDoctor").text();
+              var idHospital = $(this).find("IdHospital").text();
+              var salario = $(this).find("Salario").text();
+
+              fila = "<tr>";
+              fila += `<td>${apellidos}</td>`;
+              fila += `<td>${especialidad}</td>`;
+              fila += `<td>${idDoctor}</td>`;
+              fila += `<td>${idHospital}</td>`;
+              fila += `<td>${salario} EUR.</td>`;
+              fila += "</tr>";
+
+              $("#tabladoctores tbody").append(fila);
+            });
+          console.log("Datos leidos con exito");
+        });
+      }
+    </script>
+  </body>
+</html>

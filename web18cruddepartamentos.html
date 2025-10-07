@@ -17,17 +17,92 @@
       </thead>
       <tbody></tbody>
     </table>
+    <br /><br />
+
+    <label>Id Dpto.: </label>
+    <input type="text" id="cajaid" /><br />
+    <label>Nombre: </label>
+    <input type="text" id="cajanombre" /><br />
+    <label>Localidad: </label>
+    <input type="text" id="cajalocalidad" /><br />
+
+    <button id="botoninsert">Insertar</button>
+    <button id="botonupdate">Modificar</button>
+    <button id="botondelete">Eliminar</button>
+
     <script src="js/jquery-3.7.1.js"></script>
     <script>
-      let url = "https://apicruddepartamentosxml.azurewebsites.net/";
+      let urlApi = "https://apicruddepartamentosxml.azurewebsites.net/";
 
       $(document).ready(function () {
         loadDepartamentos();
+
+        $("#botoninsert").click(function () {
+          let id = $("#cajaid").val();
+          let nombre = $("#cajanombre").val();
+          let localidad = $("#cajalocalidad").val();
+          // Necesitamos generar un string con la misma estructura
+          // que el documento XML para sus registros
+          let dataXML = getDepartamentoXML(id, nombre, localidad);
+          let request = "api/departamentos";
+          // Realizamos la peticion con AJAX
+          $.ajax({
+            url: urlApi + request,
+            type: "POST",
+            contentType: "text/xml",
+            data: dataXML,
+            success: function () {
+              console.log("Datos insertados con exito");
+              loadDepartamentos();
+            },
+          });
+        });
+
+        $("#botonupdate").click(function () {
+          let id = $("#cajaid").val();
+          let nombre = $("#cajanombre").val();
+          let localidad = $("#cajalocalidad").val();
+          let dataXML = getDepartamentoXML(id, nombre, localidad);
+          let request = "api/departamentos";
+          $.ajax({
+            url: urlApi + request,
+            type: "PUT",
+            contentType: "text/xml",
+            data: dataXML,
+            success: function () {
+              console.log("Datos modificados con exito");
+              loadDepartamentos();
+            },
+          });
+        });
+
+        $("#botondelete").click(function () {
+          let id = $("#cajaid").val();
+          let request = "api/departamentos/" + id;
+          $.ajax({
+            url: urlApi + request,
+            type: "DELETE",
+            success: function() {
+              console.log("Datos eliminados con exito");
+              loadDepartamentos();
+            }
+          });
+        });
       });
+
+      function getDepartamentoXML(id, nombre, localidad) {
+        // Copiamos el codigo de generacion del objeto XML
+        let dataXML = "<Departamento>";
+        dataXML += "<IdDepartamento>" + id + "</IdDepartamento>";
+        dataXML += "<Nombre>" + nombre + "</Nombre>";
+        dataXML += "<Localidad>" + localidad + "</Localidad>";
+        dataXML += "</Departamento>";
+        return dataXML;
+      }
 
       function loadDepartamentos() {
         var request = "/api/Departamentos/";
-        $.get(url + request, function (data) {
+        $.get(urlApi + request, function (data) {
           console.log("Leyendo servicio...");
           var html = "";
           $(data)
@@ -43,6 +118,7 @@
               html += "</tr>";
             });
           $("#tabladepartamentos tbody").html(html);
+          console.log("Datos leidos con exito");
         });
       }
     </script>
