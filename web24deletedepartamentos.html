@@ -26,35 +26,33 @@
 
       function loadDepartamentos() {
         let request = "webresources/departamentos/";
-        var fila;
+        var html = "";
         $.getJSON(url + request, function (data) {
           $.each(data, function (index, departamento) {
             var nombre = departamento.nombre;
             var id = departamento.numero;
 
-            fila = $("<tr>");
+            html += "<tr>";
+            html += `<td>${nombre}</td>`;
+            html += `<td><button value=${id}>Eliminar</button></td>`;
+            html += "</tr>";
 
-            /*Corregir ejercicio*/
-            fila.append(`<td>${nombre}</td>`);
-            var boton = $("<button>", { "text": "Eliminar", "value": id });
-            fila.append(`<td>${boton}</td>`);
-            $("#tabladepartamentos tbody").append(fila);
-
-            $(boton).click(function () {
-              var numero = parseInt($(this).data("numero"));
+            $("button").click(function () {
+              var numero = parseInt($(this).val());
               var request = "/webresources/departamentos/delete/" + numero;
               console.log("Boton pulsado con numero " + numero);
 
-              /*$.ajax({
+              $.ajax({
                 url: url + request,
                 type: "DELETE",
                 success: function () {
                   console.log("Departamento eliminado con exito");
                   loadDepartamentos();
                 },
-              });*/
+              });
             });
           });
+          $("#tabladepartamentos tbody").html(html);
         });
       }
     </script>
