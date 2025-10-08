@@ -22,36 +22,39 @@
 
       $(document).ready(function () {
         loadDepartamentos();
-
-        $(".botonEliminar").click(function () {
-            var numero = parseInt((this).data("id"));
-            var request = "/webresources/departamentos/delete/"+numero;
-
-            $.ajax({
-                url: url + request,
-                type: "DELETE",
-                success: function() {
-                    console.log("Departamento eliminado con exito");
-                    loadDepartamentos();
-                }
-            });
-        });
       });
 
       function loadDepartamentos() {
         let request = "webresources/departamentos/";
-        var html = "";
+        var fila;
         $.getJSON(url + request, function (data) {
           $.each(data, function (index, departamento) {
             var nombre = departamento.nombre;
             var id = departamento.numero;
 
-            html += "<tr>";
-            html += `<td>${nombre}</td>`;
-            html += `<td><button class="botonEliminar" data-numero=${id}>Eliminar</button></td>`;
-            html += "</tr>";
+            fila = $("<tr>");
+
+            /*Corregir ejercicio*/
+            fila.append(`<td>${nombre}</td>`);
+            var boton = $("<button>", { "text": "Eliminar", "value": id });
+            fila.append(`<td>${boton}</td>`);
+            $("#tabladepartamentos tbody").append(fila);
+
+            $(boton).click(function () {
+              var numero = parseInt($(this).data("numero"));
+              var request = "/webresources/departamentos/delete/" + numero;
+              console.log("Boton pulsado con numero " + numero);
+
+              /*$.ajax({
+                url: url + request,
+                type: "DELETE",
+                success: function () {
+                  console.log("Departamento eliminado con exito");
+                  loadDepartamentos();
+                },
+              });*/
+            });
           });
-          $("#tabladepartamentos tbody").html(html);
         });
       }
     </script>
