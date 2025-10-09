@@ -178,7 +178,12 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
           <ul class="navbar-nav me-auto mb-2 mb-md-0">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Home</a>
+              <a
+                class="nav-link active"
+                aria-current="page"
+                href="web28homehospitales.html"
+                >Home</a
+              >
             </li>
             <li class="nav-item">
               <a class="nav-link" href="web28createhospital.html"
@@ -205,20 +210,17 @@
     </nav>
     <main class="container">
       <div class="bg-body-tertiary p-5 rounded">
-        <h1 class="mt-3">Home</h1>
-        <table
-          id="tablahospitales"
-          class="table table-bordered mt-4 table-striped table-hover"
-        >
-          <thead class="table-primary">
-            <tr>
-              <th>Nombre</th>
-              <th>Direccion</th>
-              <th>Enlaces</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+        <h1 class="mt-3">Editar Hospital</h1>
+        <input type="hidden" id="cajaid" class="form-control" />
+        <label>Nombre</label>
+        <input type="text" id="cajanombre" class="form-control" />
+        <label>Dirección</label>
+        <input type="text" id="cajadireccion" class="form-control" />
+        <label>Teléfono</label>
+        <input type="text" id="cajatelefono" class="form-control" />
+        <label>Nº Camas</label>
+        <input type="text" id="cajacamas" class="form-control" /><br />
+        <button id="botonmodificar" class="btn btn-info">Modificar</button>
       </div>
     </main>
     <script src="js/bootstrap.bundle.min.js" class="astro-vvvwv3sm"></script>
@@ -226,44 +228,56 @@
     <script>
       let url = "https://apicrudhospital.azurewebsites.net/";
 
-      // Codigo de elminar tiene que estar antes de eliminar
-      var params = new window.URLSearchParams(window.location.search);
-      var idDelete = params.get("iddelete");
-      console.log("ID del hospital a eliminar: " + idDelete);
-      if (idDelete != null) {
-        console.log("Eliminando hospital...");
+      $(document).ready(function () {
 
-        let request = "webresources/hospitales/delete/" + idDelete;
-        $.ajax({
-          url: url + request,
-          type: "DELETE",
-          success: function() {
-            console.log("Hospital eliminado con exito");
-          }
+        $("#botonmodificar").click(function() {
+            let insertRequest = "webresources/hospitales/put";
+
+            var idH = parseInt($("#cajaid").val());
+            var camas = parseInt($("#cajacamas").val());
+            var telefono = $("#cajatelefono");
+            var direccion = $("#cajadireccion");
+            var nombre = $("#cajanombre").val();
+
+            var hospital = new Object();
+            hospital.idhospital = idH;
+            hospital.nombre = nombre;
+            hospital.direccion = direccion;
+            hospital.telefono = telefono;
+            hospital.camas = camas;
+
+            var hospitalJSON = JSON.stringify(hospital);
+            console.log(hospitalJSON);
+
+            $.ajax({
+                url: url + insertRequest,
+                type: "PUT",
+                data: hospitalJSON,
+                contentType: "application/json",
+                success: function() {
+                    console.log("Datos modificados con exito");
+                    window.location.href = "web28detailshospital?id="+idH;
+                }
+
+            });
         });
 
-      }
+        var params = new window.URLSearchParams(window.location.search);
+        var idHospital = params.get("idhospital");
+        console.log("Hospital con ID " + idHospital);
+        let request = "webresources/hospitales/" + idHospital;
 
-      $(document).ready(function () {
-        let request = "webresources/hospitales";
         $.ajax({
           url: url + request,
           type: "GET",
           success: function (data) {
-            console.log("Leyendo hospitales...");
-            var html = "";
-            $.each(data, function (index, hospital) {
-              html += "<tr>";
-              html += `<td>${hospital.nombre}</td>`;
-              html += `<td>${hospital.direccion}</td>`;
-              html += "<td>";
-              html += `<a class="btn btn-warning" href='web28edithospital.html?idhospital=${hospital.idhospital}'>Editar</a>    `;
-              html += `<a class="btn btn-danger" href='web28homehospitales.html?iddelete=${hospital.idhospital}'>Eliminar</a>    `;
-              html += `<a class="btn btn-primary" href='web28detailshospital.html?idhospital=${hospital.idhospital}'>Detalles</a>`;
-              html += "</td>";
-              html += "</tr>";
-            });
-            $("#tablahospitales tbody").html(html);
+            console.log("Leyendo datos del hospital...");
+            console.log(data);
+            $("#cajaid").val(data.idhospital);
+            $("#cajanombre").val(data.nombre);
+            $("#cajadireccion").val(data.direccion);
+            $("#cajatelefono").val(data.telefono);
+            $("#cajacamas").val(data.camas);
           },
         });
       });

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="" />
+    <meta
+      name="author"
+      content="Mark Otto, Jacob Thornton, and Bootstrap contributors"
+    />
+    <meta name="generator" content="Hugo 0.84.0" />
+    <title>Lista de Doctores</title>
+
+    <link
+      rel="canonical"
+      href="https://getbootstrap.com/docs/5.0/examples/sidebars/"
+    />
+
+    <!-- Bootstrap core CSS -->
+    <link
+      href="css/bootstrap.min.css"
+      rel="stylesheet"
+      crossorigin="anonymous"
+    />
+
+    <meta name="theme-color" content="#7952b3" />
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+
+    <!-- Custom styles for this template -->
+    <link href="css/sidebars.css" rel="stylesheet" />
+  </head>
+  <body>
+    <main>
+      <div
+        class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark"
+        style="width: 280px"
+      >
+        <a
+          href="web29homedoctores.html"
+          class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="40"
+            height="32"
+            fill="currentColor"
+            class="bi bi-h-square-fill"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm9 4.002V12H9.67V8.455H6.33V12H5V4.002h1.33v3.322h3.34V4.002z"
+            />
+          </svg>
+          <span class="fs-4">Doctores</span>
+        </a>
+        <hr />
+        <ul class="nav nav-pills flex-column mb-auto">
+          <li class="nav-item">
+            <a
+              href="web29homedoctores.html"
+              class="nav-link active"
+              aria-current="page"
+            >
+              Home
+            </a>
+          </li>
+          <li>
+            <a href="web29createdoctor.html" class="nav-link text-white">
+              Añadir
+            </a>
+          </li>
+        </ul>
+        <hr />
+      </div>
+
+      <div class="b-example-divider"></div>
+
+      <div class="container p-3">
+        <h1>Lista de Doctores</h1>
+        <table
+          id="tabladoctores"
+          class="table m-4 table-bordered table-striped table-hover table w-60"
+        >
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>ID Hospital</th>
+              <th>Apellido</th>
+              <th>Especialidad</th>
+              <th>Salario</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </main>
+
+    <script src="js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="js/jquery-3.7.1.js"></script>
+    <script src="js/sidebars.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+      let url = "https://apicruddoctores.azurewebsites.net/";
+
+      var params = new window.URLSearchParams(window.location.search);
+      var id = params.get("iddelete");
+      var requestDelete = "api/Doctores/" + id;
+      if (id != null) {
+        Swal.fire({
+          title: "¿Eliminar Doctor?",
+          text: "Esta acción no se puede revertir",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Sí",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            console.log("Eliminando doctor...");
+            $.ajax({
+              url: url + requestDelete,
+              type: "DELETE",
+              success: function () {
+                console.log("Doctor eliminado con exito");
+              },
+            });
+            Swal.fire({
+              title: "Doctor eliminado",
+              text: "La operación se ha realizado con éxito.",
+              icon: "success",
+            });
+          }
+        });
+        loadDoctores();
+      }
+
+      $(document).ready(function () {
+        loadDoctores();
+      });
+
+      function loadDoctores() {
+        var request = "api/Doctores/";
+        console.log("Accediendo al servicio...");
+        $.ajax({
+          url: url + request,
+          type: "GET",
+          success: function (data) {
+            console.log("Leyendo datos del servicio...");
+            html = "";
+            $.each(data, function (index, doctor) {
+              console.log("Doctor con ID " + doctor.idDoctor + " encontrado");
+              html += "<tr>";
+              html += `<td>${doctor.idDoctor}</td>`;
+              html += `<td>${doctor.idHospital}</td>`;
+              html += `<td>${doctor.apellido}</td>`;
+              html += `<td>${doctor.especialidad}</td>`;
+              html += `<td>${parseInt(doctor.salario).toLocaleString()}€</td>`;
+              html += `<td>
+                <a class="btn btn-warning" href="web29editdoctor.html?iddoctor=${doctor.idDoctor}">Editar</a>
+                <a class="btn btn-danger" href="web29homedoctores.html?iddelete=${doctor.idDoctor}">Eliminar</a>
+                </td>`;
+              html += "</tr>";
+
+              $("#tabladoctores tbody").html(html);
+            });
+          },
+        });
+      }
+    </script>
+  </body>
+</html>

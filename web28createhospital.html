@@ -217,7 +217,7 @@
             </li>
             <li class="nav-item">
               <a class="nav-link" href="web28createhospital.html"
-                >New Hospital</a
+                >Nuevo Hospital</a
               >
             </li>
             <li class="nav-item">
@@ -274,13 +274,16 @@
           var telefono = $("#cajatelefono").val();
 
           var hospital = new Object();
-          hospital.id = id;
+          hospital.idhospital = id;
           hospital.nombre = nombre;
           hospital.camas = camas;
           hospital.telefono = telefono;
           hospital.direccion = direccion;
 
           var hospitalJSON = JSON.stringify(hospital);
+
+        
+          console.log(hospitalJSON);
 
           $.ajax({
             url: url + requestPost,
