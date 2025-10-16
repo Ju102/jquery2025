@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Práctica Examen</title>
+</head>
+
+<body>
+    <h1>Práctica de Examen XML</h1>
+    <hr>
+    <div class="xmldocument">
+        <h4>Lectura de datos en archivo XML con $.get</h4>
+        <table id="tabladepartamentosxml" border="1">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Localidad</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <br>
+    <hr>
+    <div class="filtrosxml">
+        <h4>Búsqueda de datos en archivo XML con $.get</h4>
+        <label>Introduzca ID: </label><input type="text" id="cajaId">
+        <label>Introduzca Localidad: </label><input type="text" id="cajaLocalidad">
+        <br><br>
+        <button id="buscarId">Buscar por ID</button>
+        <button id="buscarLoc">Buscar por Localidad</button>
+        <br><br>
+        <li id="lista">
+
+        </li>
+    </div>
+    <br>
+    <hr>
+    <div class="xmlcrud">
+        <h4>Operaciones CRUD de tipo XML</h4>
+
+        <table id="tabladepartamentos" border="1">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Localidad</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table><br><br>
+
+        <label>ID: </label>
+        <input type="text" id="cajacrudid" /><br />
+        <label>Nombre: </label>
+        <input type="text" id="cajacrudnombre" /><br />
+        <label>Localidad: </label>
+        <input type="text" id="cajacrudlocalidad" /><br />
+
+        <button id="botoninsert">Insertar</button>
+        <button id="botonupdate">Modificar</button>
+        <button id="botondelete">Eliminar</button>
+    </div>
+
+
+    <script src="js/jquery-3.7.1.js"></script>
+    <script>
+
+        let urlDoc = "documents/departamentos.xml";
+        let urlCrudXML = "https://apicruddepartamentosxml.azurewebsites.net/";
+
+        $(document).ready(function () {
+
+            loadServicioDocXML();
+
+            loadDepartamentosCrudXML();
+
+            $("#buscarId").click(function () {
+                var idSearch = $("#cajaId").val();
+                $.get(urlDoc, function (data) {
+                    var nodo = $(data).find(`DEPT[DEPT_NO=${idSearch}]`).first();
+                    var nombre = $(nodo).find("DNOMBRE").first().text();
+                    var localidad = $(nodo).find("LOC").first().text();
+                    var li = $("<li>").text(nombre + " - " + localidad);
+                    $("#lista").html(li);
+                });
+            });
+
+            $("#buscarLoc").click(function () {
+                var locSearch = $("#cajaLocalidad").val();
+                var filtro = `LOC:contains(${locSearch})`;
+                var html = "";
+                $.get(urlDoc, function (data) {
+                    if ($(data).find(filtro).length == 0) {
+                        alert("No existe la localidad indicada");
+                    } else {
+                        $(data).find(filtro).each(function () {
+                            var parent = $(this).parent();
+                            var id = $(parent).attr("DEPT_NO");
+                            var nombre = $(parent).find("DNOMBRE").text();
+
+                            var li = $("<li>").text(id + " - " + nombre);
+                            $("#lista").append(li);
+                        });
+                    }
+                });
+            });
+
+            $("#botoninsert").click(function () {
+                let id = $("#cajacrudid").val();
+                let nombre = $("#cajacrudnombre").val();
+                let localidad = $("#cajacrudlocalidad").val();
+                // Necesitamos generar un string con la misma estructura
+                // que el documento XML para sus registros
+                let dataXML = getDepartamentoXML(id, nombre, localidad);
+                let request = "api/departamentos";
+                // Realizamos la peticion con AJAX
+                $.ajax({
+                    url: urlCrudXML + request,
+                    type: "POST",
+                    contentType: "text/xml",
+                    data: dataXML,
+                    success: function () {
+                        console.log("Datos insertados con exito");
+                        loadDepartamentos();
+                    },
+                });
+            });
+
+            $("#botonupdate").click(function () {
+                let id = $("#cajacrudid").val();
+                let nombre = $("#cajacrudnombre").val();
+                let localidad = $("#cajacrudlocalidad").val();
+                let dataXML = getDepartamentoXML(id, nombre, localidad);
+                let request = "api/departamentos";
+                $.ajax({
+                    url: urlApi + request,
+                    type: "PUT",
+                    contentType: "text/xml",
+                    data: dataXML,
+                    success: function () {
+                        console.log("Datos modificados con exito");
+                        loadDepartamentos();
+                    },
+                });
+            });
+
+            $("#botondelete").click(function () {
+                let id = $("#cajaid").val();
+                let request = "api/departamentos/" + id;
+                $.ajax({
+                    url: urlApi + request,
+                    type: "DELETE",
+                    success: function () {
+                        console.log("Datos eliminados con exito");
+                        loadDepartamentos();
+                    }
+                });
+            });
+
+        });
+
+        function getDepartamentoXML(id, nombre, localidad) {
+            // Copiamos el codigo de generacion del objeto XML
+            let dataXML = "<Departamento>";
+            dataXML += "<IdDepartamento>" + id + "</IdDepartamento>";
+            dataXML += "<Nombre>" + nombre + "</Nombre>";
+            dataXML += "<Localidad>" + localidad + "</Localidad>";
+            dataXML += "</Departamento>";
+            return dataXML;
+        }
+
+        function loadServicioDocXML() {
+            console.log("Antes del servicio");
+            var html = "";
+            $.get(urlDoc, function (data) {
+                $(data).find("DEPT").each(function () {
+                    console.log("Leyendo datos del servicio...");
+                    var id = $(this).attr("DEPT_NO");
+                    var nombre = $(this).find("DNOMBRE").first().text();
+                    var localidad = $(this).find("LOC").first().text();
+                    html += `<tr>`;
+                    html += `<td>${id}</td>`;
+                    html += `<td>${nombre}</td>`;
+                    html += `<td>${localidad}</td>`;
+                    html += `</tr>`;
+                });
+
+                $("#tabladepartamentosxml tbody").html(html);
+            });
+            console.log("Servicio leido");
+        }
+
+        function loadDepartamentosCrudXML() {
+            var request = "/api/Departamentos/";
+            $.get(urlCrudXML + request, function (data) {
+                console.log("Leyendo servicio...");
+                var html = "";
+                $(data)
+                    .find("Departamento")
+                    .each(function () {
+                        var id = $(this).find("IdDepartamento").text();
+                        var nombre = $(this).find("Nombre").text();
+                        var localidad = $(this).find("Localidad").text();
+                        html += "<tr>";
+                        html += `<td>${id}</td>
+                        <td>${nombre}</td>
+                        <td>${localidad}</td>`;
+                        html += "</tr>";
+                    });
+                $("#tabladepartamentos tbody").html(html);
+                console.log("Datos leidos con exito");
+            });
+        }
+    </script>
+</body>
+
+</html>

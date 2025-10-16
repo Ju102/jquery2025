@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Práctica Examen</title>
+</head>
+
+<body>
+    <h1>Práctica de Examen XML</h1>
+    <hr>
+    <div class="jsondoc">
+        <h4>Lectura de datos en archivo JSON con $.getJSON</h4>
+        <table id="tablajugadoresjson" border="1">
+            <thead>
+                <tr>
+                    <th>Numero</th>
+                    <th>Nombre</th>
+                    <th>Posición</th>
+                    <th>Edad</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <br>
+    <hr>
+    </div>
+
+
+    <script src="js/jquery-3.7.1.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            $.getJSON("documents/jugadores.json", function (data) {
+                console.log("Leyendo documento...");
+                
+                $.each(data.jugadores, function (index, jugador) {
+                    var numero = jugador.numero;
+                    var nombre = jugador.nombre;
+                    var posicion = jugador.posicion;
+                    var edad = jugador.edad;
+                    var linea = $("<tr>").html(`<td>${numero}</td><td>${nombre}</td><td>${posicion}</td><td>${edad}</td>`);
+                    $("#tablajugadoresjson").append(linea);
+                });
+            });
+        });
+
+    </script>
+</body>
+
+</html>
